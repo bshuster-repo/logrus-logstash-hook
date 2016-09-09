@@ -14,6 +14,11 @@ import (
 func main() {
         log := logrus.New()
         hook, err := logrus_logstash.NewHook("tcp", "172.17.0.2:9999", "myappName")
+        // OR use NewHookWithFields to always send specific fields with every log entry
+        hook, err := logrus_logstash.NewHookWithFields("tcp", "172.17.0.2:9999", "myappName", logrus.Fields{
+                "hostname":    os.Hostname(),
+                "serviceName": "myServiceName",
+        })
         if err != nil {
                 log.Fatal(err)
         }
