@@ -16,6 +16,11 @@ func TestLogstashFormatter(t *testing.T) {
 
 	lf := LogstashFormatter{Type: "abc"}
 
+	appFields := logrus.Fields{
+		"appMessage": "appMessage",
+		"message":    "should be overriden",
+	}
+
 	fields := logrus.Fields{
 		"message": "def",
 		"level":   "ijk",
@@ -30,18 +35,21 @@ func TestLogstashFormatter(t *testing.T) {
 	entry.Message = "msg"
 	entry.Level = logrus.InfoLevel
 
-	b, _ := lf.Format(entry)
+	b, _ := lf.Format(entry, appFields)
 
 	var data map[string]interface{}
 	dec := json.NewDecoder(bytes.NewReader(b))
 	dec.UseNumber()
 	dec.Decode(&data)
 
+	// app fields
+	assert.Equal("appMessage", data["appMessage"])
+
 	// base fields
 	assert.Equal(json.Number("1"), data["@version"])
 	assert.NotEmpty(data["@timestamp"])
 	assert.Equal("abc", data["type"])
-	assert.Equal("msg", data["message"])
+	assert.Equal("msg", data["message"]) // this should override the appField
 	assert.Equal("info", data["level"])
 	assert.Equal("Get http://example.com: The error", data["error"])
 

@@ -8,23 +8,24 @@ import (
 
 // Hook represents a connection to a Logstash instance
 type Hook struct {
-	conn    net.Conn
-	appName string
+	conn      net.Conn
+	appName   string
+	appFields logrus.Fields
 }
 
 // NewHook creates a new hook to a Logstash instance, which listens on
 // `protocol`://`address`.
-func NewHook(protocol, address, appName string) (*Hook, error) {
+func NewHook(protocol, address, appName string, appFields logrus.Fields) (*Hook, error) {
 	conn, err := net.Dial(protocol, address)
 	if err != nil {
 		return nil, err
 	}
-	return &Hook{conn: conn, appName: appName}, nil
+	return &Hook{conn: conn, appName: appName, appFields: appFields}, nil
 }
 
 func (h *Hook) Fire(entry *logrus.Entry) error {
 	formatter := LogstashFormatter{Type: h.appName}
-	dataBytes, err := formatter.Format(entry)
+	dataBytes, err := formatter.Format(entry, h.appFields)
 	if err != nil {
 		return err
 	}

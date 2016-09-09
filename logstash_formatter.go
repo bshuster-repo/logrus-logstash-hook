@@ -16,8 +16,12 @@ type LogstashFormatter struct {
 	TimestampFormat string
 }
 
-func (f *LogstashFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+func (f *LogstashFormatter) Format(entry *logrus.Entry, appFields logrus.Fields) ([]byte, error) {
 	fields := make(logrus.Fields)
+	for k, v := range appFields {
+		fields[k] = v
+	}
+
 	for k, v := range entry.Data {
 		switch v := v.(type) {
 		case error:
