@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/teh-cmc/goautosocket",
+			"repository": "https://github.com/teh-cmc/goautosocket",
+			"vcs": "git",
+			"revision": "2748b5c3ec113c6c43c858d3b073700388d61656",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}
