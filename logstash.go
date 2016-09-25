@@ -19,6 +19,11 @@ func NewHook(protocol, address, appName string) (*Hook, error) {
 	return NewHookWithFields(protocol, address, appName, make(logrus.Fields))
 }
 
+// NewHookWithConn creates a new hook to a Logstash instance, using the supplied connection
+func NewHookWithConn(conn net.Conn, appName string) (*Hook, error) {
+	return NewHookWithFieldsAndConn(conn, appName, make(logrus.Fields))
+}
+
 // NewHookWithFields creates a new hook to a Logstash instance, which listens on
 // `protocol`://`address`. alwaysSentFields will be sent with every log entry.
 func NewHookWithFields(protocol, address, appName string, alwaysSentFields logrus.Fields) (*Hook, error) {
@@ -26,6 +31,12 @@ func NewHookWithFields(protocol, address, appName string, alwaysSentFields logru
 	if err != nil {
 		return nil, err
 	}
+	return NewHookWithFieldsAndConn(conn, appName, alwaysSentFields)
+}
+
+// NewHookWithFieldsAndConn creates a new hook to a Logstash instance using the supplied connection
+//The new Hook
+func NewHookWithFieldsAndConn(conn net.Conn, appName string, alwaysSentFields logrus.Fields) (*Hook, error) {
 	return &Hook{conn: conn, appName: appName, alwaysSentFields: alwaysSentFields}, nil
 }
 
