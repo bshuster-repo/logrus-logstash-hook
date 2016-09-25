@@ -4,7 +4,6 @@ import (
 	"net"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/teh-cmc/goautosocket"
 )
 
 // Hook represents a connection to a Logstash instance
@@ -23,7 +22,7 @@ func NewHook(protocol, address, appName string) (*Hook, error) {
 // NewHookWithFields creates a new hook to a Logstash instance, which listens on
 // `protocol`://`address`. alwaysSentFields will be sent with every log entry.
 func NewHookWithFields(protocol, address, appName string, alwaysSentFields logrus.Fields) (*Hook, error) {
-	conn, err := gas.Dial(protocol, address)
+	conn, err := net.Dial(protocol, address)
 	if err != nil {
 		return nil, err
 	}
@@ -44,9 +43,7 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 		return err
 	}
 	if _, err = h.conn.Write(dataBytes); err != nil {
-		if err == gas.ErrMaxRetries {
-			return err
-		}
+		return err
 	}
 	return nil
 }
