@@ -50,6 +50,15 @@ func NewHookWithFieldsAndConnAndPrefix(conn net.Conn, appName string, alwaysSent
 	return &Hook{conn: conn, appName: appName, alwaysSentFields: alwaysSentFields, hookOnlyPrefix: prefix}, nil
 }
 
+//Make a new hook which does not forward to logstash, bu simply enforces the prefix rules
+func NewFilterHook() (*Hook, error) {
+	return NewFilterHookWithPrefix("")
+}
+
+func NewFilterHookWithPrefix(prefix string) (*Hook, error) {
+	return &Hook{conn: nil, appName: "", alwaysSentFields: make(logrus.Fields), hookOnlyPrefix: prefix}, nil
+}
+
 func (h *Hook) filterHookOnly(entry *logrus.Entry) {
 	if h.hookOnlyPrefix != "" {
 		for key := range entry.Data {
@@ -80,14 +89,20 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 	//make sure we always clear the hookonly fields from the entry
 	defer h.filterHookOnly(entry)
 
-	formatter := LogstashFormatter{Type: h.appName, Hook: h}
-
 	// Add in the alwaysSentFields. We don't override fields that are already set.
 	for k, v := range h.alwaysSentFields {
 		if _, inMap := entry.Data[k]; !inMap {
 			entry.Data[k] = v
 		}
 	}
+
+	//For a filteringHook, stop here
+	if h.conn == nil {
+		return nil
+	}
+
+	formatter := LogstashFormatter{Type: h.appName, Hook: h}
+
 	dataBytes, err := formatter.Format(entry)
 	if err != nil {
 		return err
