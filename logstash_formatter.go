@@ -20,7 +20,10 @@ type LogstashFormatter struct {
 }
 
 func (f *LogstashFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	prefix := f.Hook.hookOnlyPrefix
+	prefix := ""
+	if f.Hook != nil {
+		prefix = f.Hook.hookOnlyPrefix
+	}
 	fields := make(logrus.Fields)
 	for k, v := range entry.Data {
 		//remvove the prefix when sending the fields to logstash
