@@ -16,19 +16,15 @@ type LogstashFormatter struct {
 	// TimestampFormat sets the format used for timestamps.
 	TimestampFormat string
 
-	Hook *Hook
+	HookOnlyPrefix string
 }
 
 func (f *LogstashFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	prefix := ""
-	if f.Hook != nil {
-		prefix = f.Hook.hookOnlyPrefix
-	}
 	fields := make(logrus.Fields)
 	for k, v := range entry.Data {
 		//remvove the prefix when sending the fields to logstash
-		if prefix != "" && strings.HasPrefix(k, prefix) {
-			k = strings.TrimPrefix(k, prefix)
+		if f.HookOnlyPrefix != "" && strings.HasPrefix(k, f.HookOnlyPrefix) {
+			k = strings.TrimPrefix(k, f.HookOnlyPrefix)
 		}
 
 		switch v := v.(type) {

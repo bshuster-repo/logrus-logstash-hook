@@ -78,7 +78,7 @@ hook.WithField("status", "running")
 The hook allows you to send logging to logstash and also retain the default std output in text format.
 However to keep this console output readable some fields might need to be omitted from the default non-hooked log output.
 Each hook can be configured with a prefix used to identify fields which are only to be logged to the logstash connection.
-For example we if you don't want to see the hostname and serviceName on each log line in the console output you can add a prefix:
+For example if you don't want to see the hostname and serviceName on each log line in the console output you can add a prefix:
 
 ```go
 
