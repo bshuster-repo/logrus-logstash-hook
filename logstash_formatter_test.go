@@ -38,7 +38,7 @@ func TestLogstashFormatter(t *testing.T) {
 	dec.Decode(&data)
 
 	// base fields
-	assert.Equal(json.Number("1"), data["@version"])
+	assert.Equal("1", data["@version"])
 	assert.NotEmpty(data["@timestamp"])
 	assert.Equal("abc", data["type"])
 	assert.Equal("msg", data["message"])
