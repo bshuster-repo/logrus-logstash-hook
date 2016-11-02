@@ -29,7 +29,7 @@ func (f *LogstashFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		}
 	}
 
-	fields["@version"] = 1
+	fields["@version"] = "1"
 
 	timeStampFormat := f.TimestampFormat
 
