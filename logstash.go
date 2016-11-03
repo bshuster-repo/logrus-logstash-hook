@@ -32,6 +32,8 @@ func NewHookWithFields(protocol, address, appName string, alwaysSentFields logru
 	return NewHookWithFieldsAndPrefix(protocol, address, appName, alwaysSentFields, "")
 }
 
+// NewHookWithFieldsAndPrefix creates a new hook to a Logstash instance, which listens on
+// `protocol`://`address`. alwaysSentFields will be sent with every log entry. prefix is used to select fields to filter
 func NewHookWithFieldsAndPrefix(protocol, address, appName string, alwaysSentFields logrus.Fields, prefix string) (*Hook, error) {
 	conn, err := net.Dial(protocol, address)
 	if err != nil {
@@ -41,21 +43,21 @@ func NewHookWithFieldsAndPrefix(protocol, address, appName string, alwaysSentFie
 }
 
 // NewHookWithFieldsAndConn creates a new hook to a Logstash instance using the supplied connection
-//The new Hook
 func NewHookWithFieldsAndConn(conn net.Conn, appName string, alwaysSentFields logrus.Fields) (*Hook, error) {
 	return NewHookWithFieldsAndConnAndPrefix(conn, appName, alwaysSentFields, "")
 }
 
+//NewHookWithFieldsAndConnAndPrefix creates a new hook to a Logstash instance using the suppolied connection and prefix
 func NewHookWithFieldsAndConnAndPrefix(conn net.Conn, appName string, alwaysSentFields logrus.Fields, prefix string) (*Hook, error) {
 	return &Hook{conn: conn, appName: appName, alwaysSentFields: alwaysSentFields, hookOnlyPrefix: prefix}, nil
 }
 
-//Make a new hook which does not forward to logstash, but simply enforces the prefix rules
+//NewFilterHook makes a new hook which does not forward to logstash, but simply enforces the prefix rules
 func NewFilterHook() *Hook {
 	return NewFilterHookWithPrefix("")
 }
 
-//Make a new hook which does not forward to logstash, but simply enforces the specified prefix
+//NewFilterHookWithPrefix make a new hook which does not forward to logstash, but simply enforces the specified prefix
 func NewFilterHookWithPrefix(prefix string) *Hook {
 	return &Hook{conn: nil, appName: "", alwaysSentFields: make(logrus.Fields), hookOnlyPrefix: prefix}
 }
@@ -71,6 +73,7 @@ func (h *Hook) filterHookOnly(entry *logrus.Entry) {
 
 }
 
+//WithPrefix sets a prefix filter to use in all subsequent logging
 func (h *Hook) WithPrefix(prefix string) {
 	h.hookOnlyPrefix = prefix
 }
@@ -102,9 +105,9 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 		return nil
 	}
 
-	formatter := LogstashFormatter{Type: h.appName, HookOnlyPrefix: h.hookOnlyPrefix}
+	formatter := LogstashFormatter{Type: h.appName}
 
-	dataBytes, err := formatter.Format(entry)
+	dataBytes, err := formatter.FormatWithPrefix(entry, h.hookOnlyPrefix)
 	if err != nil {
 		return err
 	}
