@@ -8,12 +8,9 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestLogstashFormatter(t *testing.T) {
-	assert := assert.New(t)
-
 	lf := LogstashFormatter{Type: "abc"}
 
 	fields := logrus.Fields{
@@ -38,20 +35,38 @@ func TestLogstashFormatter(t *testing.T) {
 	dec.Decode(&data)
 
 	// base fields
-	assert.Equal("1", data["@version"])
-	assert.NotEmpty(data["@timestamp"])
-	assert.Equal("abc", data["type"])
-	assert.Equal("msg", data["message"])
-	assert.Equal("info", data["level"])
-	assert.Equal("Get http://example.com: The error", data["error"])
-
-	// substituted fields
-	assert.Equal("def", data["fields.message"])
-	assert.Equal("ijk", data["fields.level"])
-	assert.Equal("lmn", data["fields.type"])
+	if data["@timestamp"] == "" {
+		t.Error("expected @timestamp to be not empty")
+	}
+	tt := []struct {
+		expected string
+		key      string
+	}{
+		// base fields
+		{"1", "@version"},
+		{"abc", "type"},
+		{"msg", "message"},
+		{"info", "level"},
+		{"Get http://example.com: The error", "error"},
+		// substituted fields
+		{"def", "fields.message"},
+		{"ijk", "fields.level"},
+		{"lmn", "fields.type"},
+	}
+	for _, te := range tt {
+		if te.expected != data[te.key] {
+			t.Errorf("expected data[%s] to be '%s' but got '%s'", te.key, te.expected, data[te.key])
+		}
+	}
 
 	// formats
-	assert.Equal(json.Number("1"), data["one"])
-	assert.Equal(json.Number("3.14"), data["pi"])
-	assert.Equal(true, data["bool"])
+	if json.Number("1") != data["one"] {
+		t.Errorf("expected one to be '%v' but got '%v'", json.Number("1"), data["one"])
+	}
+	if json.Number("3.14") != data["pi"] {
+		t.Errorf("expected pi to be '%v' but got '%v'", json.Number("3.14"), data["pi"])
+	}
+	if true != data["bool"] {
+		t.Errorf("expected bool to be '%v' but got '%v'", true, data["bool"])
+	}
 }
