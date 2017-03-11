@@ -242,7 +242,7 @@ func TestFire(t *testing.T) {
 		t.Error(err)
 	}
 	expected := map[string]string{
-		"@timestamp": "0001-01-01 00:00:00.000",
+		"@timestamp": "0001-01-01T00:00:00Z",
 		"@version":   "1",
 		"ignore":     "haaa",
 		"level":      "debug",
