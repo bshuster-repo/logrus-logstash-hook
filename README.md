@@ -93,3 +93,14 @@ hook.WithPrefix("_")
 
 There are also constructors available which allow you to specify the prefix from the start.
 The std-out will not have the '\_hostname' and '\_servicename' fields, and the logstash output will, but the prefix will be dropped from the name.
+
+
+# Authors
+
+Name         | Github    | Twitter    |
+------------ | --------- | ---------- |
+Boaz Shuster | ripcurld0 | @ripcurld0 |
+
+# License
+
+MIT.
