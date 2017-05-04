@@ -13,7 +13,7 @@ import (
 
 func main() {
         log := logrus.New()
-        hook, err := logrus_logstash.NewHook("tcp", "172.17.0.2:9999", "myappName")
+        hook, err := logrustash.NewHook("tcp", "172.17.0.2:9999", "myappName")
 
         if err != nil {
                 log.Fatal(err)
@@ -47,7 +47,7 @@ This can be done when creating the hook:
 
 ```go
 
-hook, err := logrus_logstash.NewHookWithFields("tcp", "172.17.0.2:9999", "myappName", logrus.Fields{
+hook, err := logrustash.NewHookWithFields("tcp", "172.17.0.2:9999", "myappName", logrus.Fields{
         "hostname":    os.Hostname(),
         "serviceName": "myServiceName",
 })
@@ -83,7 +83,7 @@ For example if you don't want to see the hostname and serviceName on each log li
 ```go
 
 
-hook, err := logrus_logstash.NewHookWithFields("tcp", "172.17.0.2:9999", "myappName", logrus.Fields{
+hook, err := logrustash.NewHookWithFields("tcp", "172.17.0.2:9999", "myappName", logrus.Fields{
         "_hostname":    os.Hostname(),
         "_serviceName": "myServiceName",
 })

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4
+
+ * Update the name of the package from `logrus_logstash` to `logrustash`.
+
 ## 0.3
 
  * Fix the Logstash format to set `@version` to `"1"`

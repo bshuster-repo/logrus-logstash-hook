@@ -1,4 +1,4 @@
-package logrus_logstash
+package logrustash
 
 import (
 	"bytes"
