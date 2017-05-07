@@ -297,3 +297,24 @@ func TestLevels(t *testing.T) {
 	}
 
 }
+
+func TestLogstashTimeStampFormat(t *testing.T) {
+	conn := ConnMock{buff: bytes.NewBufferString("")}
+	hook := &Hook{
+		conn:       conn,
+		TimeFormat: time.Kitchen,
+	}
+	fTime := time.Date(2009, time.November, 10, 3, 4, 0, 0, time.UTC)
+	if err := hook.Fire(&logrus.Entry{Time: fTime}); err != nil {
+		t.Errorf("expected fire to not return error: %s", err)
+	}
+	var res map[string]string
+	if err := json.NewDecoder(conn.buff).Decode(&res); err != nil {
+		t.Error(err)
+	}
+	if value, ok := res["@timestamp"]; !ok {
+		t.Error("expected result to have '@timestamp'")
+	} else if value != "3:04AM" {
+		t.Errorf("expected time to be '%s' but got '%s'", "3:04AM", value)
+	}
+}

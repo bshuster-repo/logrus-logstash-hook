@@ -3,6 +3,7 @@
 ## 0.4
 
  * Update the name of the package from `logrus_logstash` to `logrustash`.
+ * Add TimeFormat to Hook
 
 ## 0.3
 
