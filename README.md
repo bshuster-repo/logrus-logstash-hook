@@ -22,7 +22,7 @@ func main() {
         if err != nil {
             log.Fatal(err)
         }
-        hook, err := logrustash.New(conn, logrustash.DefaultFormat(logrus.Fields{"type": "myappName"}))
+        hook, err := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
 
         if err != nil {
                 log.Fatal(err)
