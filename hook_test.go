@@ -134,3 +134,11 @@ func TestDefaultFormatterWithEmptyFields(t *testing.T) {
 		}
 	}
 }
+
+func TestLogstashFieldsNotOverridden(t *testing.T) {
+	_ = DefaultFormatter(logrus.Fields{"user1": "11"})
+
+	if _, ok := logstashFields["user1"]; ok {
+		t.Errorf("expected user1 to not be in logstashFields: %#v", logstashFields)
+	}
+}

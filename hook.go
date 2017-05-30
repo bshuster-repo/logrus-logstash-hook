@@ -100,14 +100,15 @@ var (
 //
 // Note: to set a different configuration use the `LogstashFormatter` structure.
 func DefaultFormatter(fields logrus.Fields) logrus.Formatter {
-	f := logstashFields
-	for k, v := range fields {
-		f[k] = v
+	for k, v := range logstashFields {
+		if _, ok := fields[k]; !ok {
+			fields[k] = v
+		}
 	}
 
 	return LogstashFormatter{
 		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap},
-		Fields:    f,
+		Fields:    fields,
 	}
 }
 

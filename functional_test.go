@@ -4,12 +4,33 @@ import (
 	"bytes"
 	"fmt"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/bshuster-repo/logrus-logstash-hook"
 	"github.com/sirupsen/logrus"
 )
+
+func TestEntryIsNotChangedByLogstashFormatter(t *testing.T) {
+	buffer := bytes.NewBufferString("")
+	bufferOut := bytes.NewBufferString("")
+
+	log := logrus.New()
+	log.Out = bufferOut
+
+	hook := logrustash.New(buffer, logrustash.DefaultFormatter(logrus.Fields{"NICKNAME": ""}))
+	log.Hooks.Add(hook)
+
+	log.Info("hello world")
+
+	if !strings.Contains(buffer.String(), "NICKNAME\":") {
+		t.Errorf("expected logstash message to have '%s': %#v", "NICKNAME\":", buffer.String())
+	}
+	if strings.Contains(bufferOut.String(), "NICKNAME\":") {
+		t.Errorf("expected main logrus message to not have '%s': %#v", "NICKNAME\":", buffer.String())
+	}
+}
 
 func TestTimestampFormatKitchen(t *testing.T) {
 	log := logrus.New()
@@ -52,6 +73,46 @@ func TestTextFormatLogstash(t *testing.T) {
 `, mTime.Format(time.Kitchen))
 	if buffer.String() != expected {
 		t.Errorf("expected JSON to be '%#v' but got '%#v'", expected, buffer.String())
+	}
+}
+
+func TestDefaultFormatterNotOverrideMyLogstashFieldsValues(t *testing.T) {
+	formatter := logrustash.DefaultFormatter(logrus.Fields{"@version": "2", "type": "mylogs"})
+
+	dataBytes, err := formatter.Format(&logrus.Entry{Data: logrus.Fields{}})
+	if err != nil {
+		t.Errorf("expected Format to not return error: %s", err)
+	}
+
+	expected := []string{
+		`"@version":"2"`,
+		`"type":"mylogs"`,
+	}
+
+	for _, expField := range expected {
+		if !strings.Contains(string(dataBytes), expField) {
+			t.Errorf("expected '%s' to be in '%s'", expField, string(dataBytes))
+		}
+	}
+}
+
+func TestDefaultFormatterLogstashFields(t *testing.T) {
+	formatter := logrustash.DefaultFormatter(logrus.Fields{})
+
+	dataBytes, err := formatter.Format(&logrus.Entry{Data: logrus.Fields{}})
+	if err != nil {
+		t.Errorf("expected Format to not return error: %s", err)
+	}
+
+	expected := []string{
+		`"@version":"1"`,
+		`"type":"log"`,
+	}
+
+	for _, expField := range expected {
+		if !strings.Contains(string(dataBytes), expField) {
+			t.Errorf("expected '%s' to be in '%s'", expField, string(dataBytes))
+		}
 	}
 }
 
