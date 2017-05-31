@@ -5,6 +5,7 @@
  * Remove the old API: `NewConnWith`, `WithPrefix` and etc and move to a simple `New` function.
  * Prefix is no longer supported in this package.
  * Change the Hook structure to have only two members: `logrus.Formatter` and `io.Writer`.
+ * Reverted original logrus package path to `github.com/Sirupsen/logrus` because this caused backward compatibility issue and [was reverted](https://github.com/sirupsen/logrus/issues/451#issuecomment-264332021)
 
 ## 0.4
 
