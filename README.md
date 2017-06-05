@@ -12,7 +12,7 @@ package main
 import (
         "log"
 
-        "github.com/sirupsen/logrus"
+        "github.com/Sirupsen/logrus"
         "github.com/bshuster-repo/logrus-logstash-hook"
 )
 

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/bshuster-repo/logrus-logstash-hook"
-	"github.com/sirupsen/logrus"
 )
 
 func TestEntryIsNotChangedByLogstashFormatter(t *testing.T) {
