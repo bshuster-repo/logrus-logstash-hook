@@ -27,7 +27,7 @@ func main() {
         if err != nil {
                 log.Fatal(err)
         }
-        log.Hooks.Add(hook)
+        log.AddHook(hook)
         ctx := log.WithFields(logrus.Fields{
           "method": "main",
         })
