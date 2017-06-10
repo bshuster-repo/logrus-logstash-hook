@@ -63,7 +63,10 @@ func copyEntry(e *logrus.Entry, fields logrus.Fields) *logrus.Entry {
 	ne.Message = e.Message
 	ne.Level = e.Level
 	ne.Time = e.Time
-	ne.Data = fields
+	ne.Data = logrus.Fields{}
+	for k, v := range fields {
+		ne.Data[k] = v
+	}
 	for k, v := range e.Data {
 		ne.Data[k] = v
 	}

@@ -76,6 +76,27 @@ func TestTextFormatLogstash(t *testing.T) {
 	}
 }
 
+// Github issue #39
+func TestLogWithFieldsDoesNotOverrideHookFields(t *testing.T) {
+	log := logrus.New()
+	buffer := bytes.NewBufferString("")
+	hook := logrustash.New(buffer, logrustash.LogstashFormatter{
+		Formatter: &logrus.JSONFormatter{},
+		Fields:    logrus.Fields{},
+	})
+	log.Hooks.Add(hook)
+	log.WithField("animal", "walrus").Info("bla")
+	attr := "\"animal\":\"walrus\""
+	if !strings.Contains(buffer.String(), attr) {
+		t.Errorf("expected to have '%s' in '%s'", attr, buffer.String())
+	}
+	buffer.Reset()
+	log.Info("hahaha")
+	if strings.Contains(buffer.String(), attr) {
+		t.Errorf("expected not to have '%s' in '%s'", attr, buffer.String())
+	}
+}
+
 func TestDefaultFormatterNotOverrideMyLogstashFieldsValues(t *testing.T) {
 	formatter := logrustash.DefaultFormatter(logrus.Fields{"@version": "2", "type": "mylogs"})
 
