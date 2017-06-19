@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"io"
 )
 
 type simpleFmter struct{}
@@ -140,5 +141,52 @@ func TestLogstashFieldsNotOverridden(t *testing.T) {
 
 	if _, ok := logstashFields["user1"]; ok {
 		t.Errorf("expected user1 to not be in logstashFields: %#v", logstashFields)
+	}
+}
+
+func TestFireWithLevels(t *testing.T) {
+	buffer := bytes.NewBuffer(nil)
+	h := Hook{
+		writer:    buffer,
+		formatter: simpleFmter{},
+	}
+
+	h.SetLevel(logrus.WarnLevel)
+
+	testData := []struct {
+		writer   io.Writer
+		level    logrus.Level
+		message  string
+		expected string
+	}{
+		{
+			bytes.NewBuffer(nil),
+			logrus.DebugLevel,
+			"debug",
+			"",
+		},
+		{
+			bytes.NewBuffer(nil),
+			logrus.WarnLevel,
+			"warn",
+			"msg: \"warn\"",
+		},
+	}
+
+	for _, test := range testData {
+		entry := &logrus.Entry{
+			Message: test.message,
+			Data:    logrus.Fields{},
+			Level:   test.level,
+		}
+
+		err := h.Fire(entry)
+		if err != nil {
+			t.Error("expected Fire to not return error")
+		}
+
+		if buffer.String() != test.expected {
+			t.Errorf("expected to see '%s' in '%s'", test.expected, buffer.String())
+		}
 	}
 }
