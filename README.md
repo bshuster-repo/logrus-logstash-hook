@@ -10,30 +10,29 @@ Use this hook to send the logs to [Logstash](https://www.elastic.co/products/log
 package main
 
 import (
-        "log"
-
-        "github.com/sirupsen/logrus"
         "github.com/bshuster-repo/logrus-logstash-hook"
+        "github.com/sirupsen/logrus"
+        "net"
 )
 
 func main() {
         log := logrus.New()
         conn, err := net.Dial("tcp", "logstash.mycompany.net:8911")
         if err != nil {
-            log.Fatal(err)
+                log.Fatal(err)
         }
-        hook, err := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
+        hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
 
         if err != nil {
                 log.Fatal(err)
         }
         log.Hooks.Add(hook)
         ctx := log.WithFields(logrus.Fields{
-          "method": "main",
+                "method": "main",
         })
-        ...
         ctx.Info("Hello World!")
 }
+
 ```
 
 This is how it will look like:
