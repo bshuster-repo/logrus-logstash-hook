@@ -69,7 +69,7 @@ func TestTextFormatLogstash(t *testing.T) {
 
 	log.Warning("this is a warning message!")
 	mTime := time.Now()
-	expected := fmt.Sprintf(`time="%s" level=warning msg="this is a warning message!" HOSTNAME=localhost USERNAME=root 
+	expected := fmt.Sprintf(`time="%s" level=warning msg="this is a warning message!" HOSTNAME=localhost USERNAME=root
 `, mTime.Format(time.Kitchen))
 	if buffer.String() != expected {
 		t.Errorf("expected JSON to be '%#v' but got '%#v'", expected, buffer.String())
