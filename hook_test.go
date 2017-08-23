@@ -190,3 +190,41 @@ func TestFireWithLevels(t *testing.T) {
 		}
 	}
 }
+
+func TestHook_RemoveLevel(t *testing.T) {
+	hook := Hook{
+		levels: logrus.AllLevels,
+	}
+
+	for _, levelToRemove := range logrus.AllLevels {
+		hook.RemoveLevel(levelToRemove)
+
+		for _, level := range hook.levels {
+			if level == levelToRemove {
+				t.Errorf("Level %d was not removed from hook levels %v", levelToRemove, hook.levels)
+			}
+		}
+	}
+}
+
+func TestHook_SetLevel(t *testing.T) {
+	hook := Hook{
+		levels: []logrus.Level{},
+	}
+
+	for _, levelToAdd := range logrus.AllLevels {
+		hook.SetLevel(levelToAdd)
+
+		var found bool = false
+
+		for _, level := range hook.levels {
+			if level == levelToAdd {
+				found = true
+			}
+		}
+
+		if !found {
+			t.Errorf("Level %d was not added to hook levels %v", levelToAdd, hook.levels)
+		}
+	}
+}

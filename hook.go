@@ -67,6 +67,18 @@ func (h *Hook) SetLevel(level logrus.Level) {
 	h.levels = levels
 }
 
+func (h *Hook) RemoveLevel(level logrus.Level) {
+	var levels []logrus.Level
+
+	for _, l := range h.levels {
+		if l != level {
+			levels = append(levels, l)
+		}
+	}
+
+	h.levels = levels
+}
+
 // Using a pool to re-use of old entries when formatting Logstash messages.
 // It is used in the Fire function.
 var entryPool = sync.Pool{
