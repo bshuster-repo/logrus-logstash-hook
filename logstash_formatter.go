@@ -45,7 +45,7 @@ func (f *LogstashFormatter) FormatWithPrefix(entry *logrus.Entry, prefix string)
 	timeStampFormat := f.TimestampFormat
 
 	if timeStampFormat == "" {
-		timeStampFormat = time.RFC3999
+		timeStampFormat = time.RFC3339
 	}
 
 	fields["@timestamp"] = entry.Time.Format(timeStampFormat)
