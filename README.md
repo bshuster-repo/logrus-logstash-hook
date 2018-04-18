@@ -23,9 +23,6 @@ func main() {
         }
         hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
 
-        if err != nil {
-                log.Fatal(err)
-        }
         log.Hooks.Add(hook)
         ctx := log.WithFields(logrus.Fields{
                 "method": "main",
