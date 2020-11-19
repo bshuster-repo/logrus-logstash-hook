@@ -110,7 +110,7 @@ func DefaultFormatter(fields logrus.Fields) logrus.Formatter {
 	}
 
 	return LogstashFormatter{
-		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap},
+		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap, TimestampFormat:"2006-01-02T15:04:05.000Z"},
 		Fields:    fields,
 	}
 }
