@@ -3,6 +3,7 @@ package logrustash
 import (
 	"io"
 	"sync"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -110,7 +111,7 @@ func DefaultFormatter(fields logrus.Fields) logrus.Formatter {
 	}
 
 	return LogstashFormatter{
-		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap, TimestampFormat:"2006-01-02T15:04:05.000Z"},
+		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap, TimestampFormat:time.RFC3339Nano},
 		Fields:    fields,
 	}
 }
