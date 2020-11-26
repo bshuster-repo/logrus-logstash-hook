@@ -1,7 +1,9 @@
 package logrustash
 
 import (
+	"github.com/ulule/deepcopier"
 	"io"
+	"runtime"
 	"sync"
 	"time"
 
@@ -64,6 +66,13 @@ func copyEntry(e *logrus.Entry, fields logrus.Fields) *logrus.Entry {
 	ne.Message = e.Message
 	ne.Level = e.Level
 	ne.Time = e.Time
+	if e.HasCaller() {
+		ne.Caller = &runtime.Frame{}
+		deepcopier.Copy(e.Caller).To(ne.Caller)
+		ne.Logger = &logrus.Logger{
+			ReportCaller: e.Logger.ReportCaller,
+		}
+	}
 	ne.Data = logrus.Fields{}
 	for k, v := range fields {
 		ne.Data[k] = v
