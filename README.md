@@ -49,9 +49,9 @@ This is how it will look like:
 
 # Maintainers
 
-Name         | Github    | Twitter    |
------------- | --------- | ---------- |
-Boaz Shuster | ripcurld0 | @ripcurld0 |
+Name         | Github    |
+------------ | --------- |
+Boaz Shuster | boaz0     |
 
 # License
 
