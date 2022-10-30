@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -13,7 +14,6 @@ import (
 // formatter to format the entry to a Logstash format before sending.
 //
 // To initialize it use the `New` function.
-//
 type Hook struct {
 	writer    io.Writer
 	formatter logrus.Formatter
@@ -117,8 +117,11 @@ func DefaultFormatter(fields logrus.Fields) logrus.Formatter {
 	}
 
 	return LogstashFormatter{
-		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap},
-		Fields:    fields,
+		Formatter: &logrus.JSONFormatter{
+			FieldMap:        logstashFieldMap,
+			TimestampFormat: time.RFC3339Nano,
+		},
+		Fields: fields,
 	}
 }
 
