@@ -67,6 +67,8 @@ func copyEntry(e *logrus.Entry, fields logrus.Fields) *logrus.Entry {
 	ne.Data = logrus.Fields{}
 
 	if e.HasCaller() {
+		ne.Caller = e.Caller
+		ne.Logger = e.Logger
 		ne.Data["function"] = e.Caller.Function
 		ne.Data["file"] = fmt.Sprintf("%s:%d", e.Caller.File, e.Caller.Line)
 	}
